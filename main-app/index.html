@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>微前端-vue框架</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="importmap-type" content="systemjs-importmap" />
+    <!-- 在根项目中引入所有的模块文件和子项目，从而在其余项目中可以进行模块的引用 -->
+    <!-- 为啥single-spa、Vue、VueRouter也需要动态引入呢 -->
+    <script type="systemjs-importmap">
+      {
+        "imports": {
+          "navbar": "http://localhost:8080/js/app.js",
+          "app1": "http://localhost:8081/js/app.js",
+          "app2": "http://localhost:8082/js/app.js",
+          "single-spa": "https://cdnjs.cloudflare.com/ajax/libs/single-spa/4.3.7/system/single-spa.min.js",
+          "Vue": "https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js",
+          "VueRouter": "https://cdn.jsdelivr.net/npm/vue-router@3.0.7/dist/vue-router.min.js"
+        }
+      }
+    </script>
+
+    <link
+      rel="preload"
+      href="https://cdnjs.cloudflare.com/ajax/libs/single-spa/4.3.7/system/single-spa.min.js"
+      as="script"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"
+      as="script"
+      crossorigin="anonymous"
+    />
+    <script src="https://unpkg.com/import-map-overrides@1.7.2/dist/import-map-overrides.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/6.1.1/system.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/6.1.1/extras/amd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/6.1.1/extras/named-exports.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/6.1.1/extras/named-register.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/6.1.1/extras/use-default.min.js"></script>
+  </head>
+  <body>
+    ---------root------
+    <script>
+      window._coworking_ = true;
+      (function () {
+          // 这么写的意义是什么？
+          // 因为需要使用到这些工具库去做处理，譬如：singleSpa.registerApplication
+          // 要么可以script引入，然后从window去获取也可以，但是这样会污染window
+        Promise.all([
+          System.import("single-spa"),
+          System.import("Vue"),
+          System.import("VueRouter"),
+        ]).then(function (modules) {
+          var singleSpa = modules[0];
+          var Vue = modules[1];
+          var VueRouter = modules[2];
+
+          Vue.use(VueRouter);
+
+          // 先注册，这样single-spa才知道在什么时机，如何去初始化、下载、挂载和卸载各应用
+          // 注册的同时会把子应用加到body最后
+          singleSpa.registerApplication(
+            "navbar",
+            () => System.import("navbar"),
+            (location) => true
+          );
+
+          singleSpa.registerApplication(
+            "app1",
+            () => System.import("app1"),
+            (location) => location.pathname.startsWith("/app1"),
+            {
+              some: "Hi，晚上好，该睡觉了",
+            }
+          );
+
+          singleSpa.registerApplication(
+            "app2",
+            () => System.import("app2"),
+            (location) => location.pathname.startsWith("/app2")
+          );
+
+          singleSpa.start();
+        });
+      })();
+    </script>
+    <!-- See https://github.com/joeldenning/import-map-overrides#user-interface  -->
+    <import-map-overrides-full
+      show-when-local-storage="overrides-ui"
+    ></import-map-overrides-full>
+  </body>
+</html>

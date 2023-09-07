@@ -1,0 +1,14 @@
+{
+  "name": "main-app",
+  "version": "1.0.0",
+  "description": "微前端的主应用",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "serve": "serve -s -l 5000"
+  },
+  "devDependencies": {
+    "serve": "^11.1.0"
+  }
+}
