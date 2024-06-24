@@ -1,5 +1,9 @@
 // Temporary until we can use https://github.com/webpack/webpack-dev-server/pull/2143
+
 module.exports = {
+  css:{
+    extract: true
+  },
   chainWebpack: (config) => {
     config.devServer.set("inline", false);
     config.devServer.set("hot", true);
@@ -14,4 +18,5 @@ module.exports = {
     config.externals([{ vue: "Vue" }, { "vue-router": "VueRouter" }]);
   },
   filenameHashing: false,
+
 };

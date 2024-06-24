@@ -3,6 +3,7 @@
     ----
     <div>
       <img alt="Vue logo" src="../assets/logo.png">
+      <h1 class="app1-style"></h1>
     </div>
     <router-link to="/app2/about">App2's about page</router-link>
   </div>

@@ -1,5 +1,10 @@
+const prefixer = require('postcss-prefix-selector');
+
 module.exports = {
   plugins: {
-    autoprefixer: {}
+    // autoprefixer: {},
+    "postcss-prefix-selector": {
+      prefix: '.my-prefix',
+    }
   }
 }
